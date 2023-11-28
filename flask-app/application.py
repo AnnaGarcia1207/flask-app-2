@@ -2,11 +2,7 @@ from flask import Flask, render_template, request
 from elasticsearch import Elasticsearch, exceptions
 from transformers import CLIPProcessor, CLIPModel, CLIPTokenizer
 import torch
-import json
 from PIL import Image
-import ast
-import sys
-from dotenv import load_dotenv
 import os
 
 application = Flask(__name__)
@@ -35,25 +31,29 @@ application = Flask(__name__)
 
 
 
-elastic_search = None
 
-try:
-    # Your Elasticsearch operations here
-    elastic_search = Elasticsearch(
-    cloud_id= os.getenv('ES_CLOUD_ID'),
-    api_key= os.getenv('ES_API_KEY'),
-    ssl_assert_fingerprint=os.getenv('ES_SSL')
+# Your Elasticsearch operations here
+# elastic_search = Elasticsearch(
+#     cloud_id= os.getenv('ES_CLOUD_ID'),
+#     api_key= os.getenv('ES_API_KEY'),
+#     ssl_assert_fingerprint=os.getenv('ES_SSL')
+# )
+
+elastic_search = Elasticsearch(
+    cloud_id= "dataViz:dXMtZWFzdC0xLmF3cy5mb3VuZC5pbzo0NDMkZmUyZDZlZTk3OTIxNGMyOGEzYWEwYjMyYjU1ZDVjNDYkMjYwYzE4NTUxZmU0NGRhYzhlYmRjNzU0Mjc3Y2QwYmE=", 
+    api_key="SnVmR0Q0d0J6R3piQWtsb25MaVo6RTBhdXZwNTlTZWV2eEJUNE0xSjFpdw==", 
+    ssl_assert_fingerprint="89:0C:01:EC:62:D3:AB:51:5A:E0:9D:11:3B:2E:5D:74:5A:79:8A:0D:70:2E:7D:13:E6:2F:1D:53:FF:3A:CF:1E" 
     )
 
-except exceptions as e:
-    # Handling the exception
-    print("An error occurred:", e)
-    try:
-        # Using info() method to get information about the cluster
-        info = elastic_search.info()
-        print("Cluster info:", info)
-    except exceptions as info_error:
-        print("Error fetching cluster info:", info_error)
+# except exceptions as e:
+#     # Handling the exception
+#     print("An error occurred:", e)
+#     try:
+#         # Using info() method to get information about the cluster
+#         info = elastic_search.info()
+#         print("Cluster info:", info)
+#     except exceptions as info_error:
+#         print("Error fetching cluster info:", info_error)
 
 print(elastic_search.info())
 
@@ -68,53 +68,47 @@ model = CLIPModel.from_pretrained(model_ID).to(device)
 processor = CLIPProcessor.from_pretrained(model_ID)
 tokenizer = CLIPTokenizer.from_pretrained(model_ID)
 
-index_name = "scifig" #"scifig-pilot"
+index_name = "scifig-pilot"
 
 def create_results_map(search_results):
     results = {}
     for hit in search_results:
         
-        # hit_id = hit['_id']
-        # score = hit['_score'] *100
-        # label = hit['_source']['label']
-        # location = hit['_source']['location']
-        # name = location.split('/')[-1]
-
         hit_id = hit['_id']
         score = hit['_score'] *100
         label = hit['_source']['label']
-        location = hit['_source']['image_path']
+        location = hit['_source']['location']
         name = location.split('/')[-1]
-        confidence_dict = ast.literal_eval(hit['_source']['confidence'])
-        one = confidence_dict[1]['label']
-        one_score = confidence_dict[1]['score']
 
-        two = confidence_dict[2]['label']
-        two_score = confidence_dict[2]['score']
+        # hit_id = hit['_id']
+        # score = hit['_score'] *100
+        # label = hit['_source']['label']
+        # location = hit['_source']['image_path']
+        # name = location.split('/')[-1]
+        # confidence_dict = ast.literal_eval(hit['_source']['confidence'])
+        # one = confidence_dict[1]['label']
+        # one_score = confidence_dict[1]['score']
 
-        three = confidence_dict[3]['label']
-        three_score = confidence_dict[3]['score']
+        # two = confidence_dict[2]['label']
+        # two_score = confidence_dict[2]['score']
+
+        # three = confidence_dict[3]['label']
+        # three_score = confidence_dict[3]['score']
 
         results[hit_id] = {
             "score" : f'{score:.2f}%',
             "name" : name,
             "label" : label,
             "location" : location,
-            "top_1" : one,
-            "top_1_score" : one_score,
-            "top_2" : two,
-            "top_2_score" : two_score,
-            "top_3" : three,
-            "top_3_score" : three_score
         }
     
     return results
 
 def search_embeddings(embedding_vector, embedding_type):
-    source_fields = ['Id', 'label', 'image_path', 'confidence']
-    # source_fields = ['id', 'label', 'location']
-    k = 301
-    num_candidates = 500
+    # source_fields = ['Id', 'label', 'image_path', 'confidence']
+    source_fields = ['id', 'label', 'location']
+    k = 99
+    num_candidates = 150
     query = {
         "field": embedding_type,
         "query_vector": embedding_vector,

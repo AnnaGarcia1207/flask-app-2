@@ -77,11 +77,6 @@
                         <img src="{{ url_for('static', filename=value['location']) }}" alt="Image" width="300">
                         <span class="label">Predicted label: {{ value['label'] }}</span>
                         <span class="es-score">ES Score: {{ value['score'] }}</span>
-                        <span class="top-labels">Top 3 labels: 
-                            <span class="top-1">{{ value['top_1'] }} : {{ value['top_1_score'] }}</span> 
-                            <span class="top-2">{{ value['top_2'] }} : {{ value['top_2_score'] }}</span>
-                            <span class="top-3">{{ value['top_3'] }} : {{ value['top_3_score'] }}</span>
-                        </span>
                     </div>
                 {% endfor %}
             {% endif %}
