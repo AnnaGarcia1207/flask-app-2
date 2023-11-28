@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CS734 - DataViz Explorer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+</head>
+<body>
+    <div class="topnav">
+        <a class="active" href="#home">DataViz Explorer</a>
+    </div>
+
+    <div class="form-container">
+        <!-- Text Search Form -->
+        <form action="/" method="POST" class="text-search-form">
+            <input type="text" id="searchQuery" name="searchQuery" placeholder="Search for visualizations.." >
+            <button type="submit">Search</button>
+        </form>
+
+        <!-- Image Upload Form -->
+        <form action="/upload" method="POST" enctype="multipart/form-data" class="image-upload-form">
+            <input type="file" id="imageUpload" name="imageUpload" hidden onchange="submitForm()"/>
+            <label for="imageUpload">Upload and Search</label>
+
+        </form>
+    </div>
+
+    <!-- ========================================== -->
+    <form action="/" method="POST">
+        <table class="radio-table">
+            <tr>
+                <td><input type="radio" id="algorithm" name="searchQuery" value="Algorithm" onchange="this.form.submit()"/><label for="algorithm">Algorithm</label></td>
+                <td><input type="radio" id="architecture" name="searchQuery" value="architecture" onchange="this.form.submit()"/><label for="architecture">Architecture</label></td>
+                <td><input type="radio" id="bar-chart" name="searchQuery" value="Bar chart" onchange="this.form.submit()"/><label for="bar-chart">Bar chart</label></td>
+                <td><input type="radio" id="boxplot" name="searchQuery" value="boxplot" onchange="this.form.submit()"/><label for="boxplot">Boxplot</label></td>
+                <td><input type="radio" id="confusion matrix" name="searchQuery" value="confusion matrix" onchange="this.form.submit()"/><label for="confusion matrix">Confusion matrix</label></td>
+            </tr>
+
+            <tr>
+                <td><input type="radio" id="graphs" name="searchQuery" value="graph" onchange="this.form.submit()"/><label for="graphs">Graphs</label></td>
+                <td><input type="radio" id="line-chart" name="searchQuery" value="line chart" onchange="this.form.submit()"/><label for="line-chart">Line Chart</label></td>
+                <td><input type="radio" id="map" name="searchQuery" value="map" onchange="this.form.submit()"/><label for="map">Map</label></td>
+                <td><input type="radio" id="pareto" name="searchQuery" value="pareto" onchange="this.form.submit()"/><label for="pareto">Pareto</label></td>
+                <td><input type="radio" id="venn-diagram" name="searchQuery" value="venn diagram" onchange="this.form.submit()"/><label for="venn-diagram">Venn diagram</label></td>
+            </tr>
+
+            <tr>
+                <td><input type="radio" id="word-cloud" name="searchQuery" value="word cloud" onchange="this.form.submit()"/><label for="word-cloud">Word Cloud</label></td>
+                <td><input type="radio" id="natural-image" name="searchQuery" value="natural image" onchange="this.form.submit()"/><label for="natural-image">Natural Image</label></td>
+                <td><input type="radio" id="neural-networks" name="searchQuery" value="neural networks" onchange="this.form.submit()"/><label for="neural-networks">Neural Networks</label></td>
+                <td><input type="radio" id="nlp" name="searchQuery" value="NLP (natural language processing) grammar" onchange="this.form.submit()"/><label for="nlp">NLP grammar</label></td>
+                <td><input type="radio" id="pie-chart" name="searchQuery" value="pie chart" onchange="this.form.submit()"/><label for="pie-chart">Pie Chart</label></td>
+            </tr>
+
+            <tr>
+                <td><input type="radio" id="scatter-plot" name="searchQuery" value="scatter plot" onchange="this.form.submit()"/><label for="scatter-plot">Scatter plot</label></td>
+                <td><input type="radio" id="screenshot" name="searchQuery" value="screenshot" onchange="this.form.submit()"/><label for="screenshot">Screenshot</label></td>
+                <td><input type="radio" id="tables" name="searchQuery" value="tables" onchange="this.form.submit()"/><label for="tables">Tables</label></td>
+                <td><input type="radio" id="tree-graph" name="searchQuery" value="tree graph" onchange="this.form.submit()"/><label for="tree-graph">Tree graph</label></td>
+            </tr>
+        </table>
+        <!-- ... -->
+        <!-- Add more radio buttons here, each wrapped in a div with class "radio-button" -->
+        <!-- Repeat for all 19 classes, ensuring each has a unique id and matching label -->
+    </form>
+
+    
+    <!-- Results -->
+    <div id="results">
+        <div class="result-grid">
+            {% if results %}
+                {% for key, value in results.items() %}
+                    <div class="result-item">
+                        <span class="filename">filename: {{ value['name'] }}</span>
+                        <img src="{{ url_for('static', filename=value['location']) }}" alt="Image" width="300">
+                        <span class="label">Predicted label: {{ value['label'] }}</span>
+                        <span class="es-score">ES Score: {{ value['score'] }}</span>
+                        <span class="top-labels">Top 3 labels: 
+                            <span class="top-1">{{ value['top_1'] }} : {{ value['top_1_score'] }}</span> 
+                            <span class="top-2">{{ value['top_2'] }} : {{ value['top_2_score'] }}</span>
+                            <span class="top-3">{{ value['top_3'] }} : {{ value['top_3_score'] }}</span>
+                        </span>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        function submitForm() {
+            document.querySelector('.image-upload-form').submit();
+        }
+    </script>
+</body>
+</html>

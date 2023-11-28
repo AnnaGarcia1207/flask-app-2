@@ -1,0 +1,15 @@
+# created by virtualenv automatically
+static/images/
+img_preds_embeddings_csvs/
+__pycache__/
+venv/
+.venv/
+dataframes/
+config.json
+elastic-ece-ca-cert.pem
+.vscode/
+text.txt
+.env
+flask.zip
+.ebextensions/
+.ebextensions
