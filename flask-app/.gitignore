@@ -1,15 +1,11 @@
 # created by virtualenv automatically
-static/images/
-img_preds_embeddings_csvs/
 __pycache__/
-venv/
-.venv/
-dataframes/
+myenv
+.myenv/
 config.json
-elastic-ece-ca-cert.pem
 .vscode/
 text.txt
 .env
 flask.zip
-.ebextensions/
-.ebextensions
+myenv
+flask-app.zip
