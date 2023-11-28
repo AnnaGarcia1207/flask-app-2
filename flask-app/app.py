@@ -5,7 +5,7 @@ import torch
 from PIL import Image
 import os
 
-application = Flask(__name__)
+app = Flask(__name__)
 
 # Using config file to stre creds
 # config_file_path = "config.json"
@@ -156,7 +156,7 @@ def process_image_query(input):
    
 
 
-@application.route('/', methods=['GET','POST'])
+@app.route('/', methods=['GET','POST'])
 def index():
     # grab the text query
     results_dict = None
@@ -169,7 +169,7 @@ def index():
     return render_template("index.html", results=results_dict)
 
 
-@application.route('/upload', methods=['POST'])
+@app.route('/upload', methods=['POST'])
 def upload():
     results_dict = None
     if 'imageUpload' in request.files:
@@ -180,4 +180,4 @@ def upload():
     return render_template("index.html", results=results_dict)
 
 if __name__=="__main__":
-    application.run(debug=True)
+    app.run()
